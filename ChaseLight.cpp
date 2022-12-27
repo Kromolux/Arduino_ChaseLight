@@ -1,11 +1,25 @@
 #include "ChaseLight.h"
 
-ChaseLight::ChaseLight( const byte &size, const byte *channels, const int &mDelay )
+ChaseLight::ChaseLight( void )
+{
+	this->_size = 0;
+	this->_mDelay = 0;
+	this->_channels = new byte[1];
+	this->_channels[0] = 0;
+}
+
+ChaseLight::~ChaseLight( void )
+{
+	delete [] this->_channels;
+}
+
+void	ChaseLight::init( const byte &size, const byte *channels, const int &mDelay )
 {
 	this->_size = size;
 	this->_mDelay = mDelay;
-	this->_channels = new byte[this->_size];
-	for (byte i = 0; i < this->_size; ++i)
+	delete [] this->_channels;
+	this->_channels = new byte[_size];
+	for (byte i = 0; i < _size; ++i)
 	{
 		this->_channels[i] = channels[i];
 		pinMode(this->_channels[i], OUTPUT);
@@ -13,10 +27,8 @@ ChaseLight::ChaseLight( const byte &size, const byte *channels, const int &mDela
 	}
 }
 
-ChaseLight::~ChaseLight( void )
-{
-	delete [] this->_channels;
-}
+void	ChaseLight::setmDelay( const int &mDelay )
+{	this->_mDelay = mDelay;	}
 
 void	ChaseLight::flash( int mDelay = 0, const byte count = 3 )
 {
@@ -81,12 +93,6 @@ void	ChaseLight::knightRider( int mDelay, const byte &count, const byte &value, 
 			for (byte i = 1, j = 0; i < this->_size; j = i, ++i)
 				set2Channel(_channels[j], _channels[i], value, mDelay);
 		}
-			/*
-		int i = static_cast<int>(this->_size) - 1;
-		int j = j;
-		for (; i >= 0; j = i, --i)
-			set2Channel(_channels[j], _channels[i], value, mDelay);
-			*/
 	}
 	setChannelsD(!value);
 }
@@ -96,4 +102,37 @@ void	ChaseLight::set2Channel(const byte &first, const byte &second, const byte &
 	digitalWrite(first, value);
 	digitalWrite(second, !value);
 	delay(mDelay);
+}
+
+void	ChaseLight::fillLeft( const int &mDelay = 0, const byte &count = 3 )
+{	fill(mDelay, count, &ChaseLight::fillLeftLoop);	}
+
+void	ChaseLight::fillRight( const int &mDelay = 0, const byte &count = 3 )
+{	fill(mDelay, count, &ChaseLight::fillRightLoop);	}
+
+void	ChaseLight::fill( int mDelay, const byte &count, void (ChaseLight::*f)(const int&, const byte&))
+{
+	if (mDelay == 0)
+		mDelay = this->_mDelay;
+	
+	for (byte total = 0; total < count; ++total)
+	{
+		for (byte i = 0; i < _size; ++i)
+			(this->*f)(mDelay, i);
+		delay(mDelay);
+		setChannelsD(LOW);
+		delay(mDelay);
+	}
+}
+
+void	ChaseLight::fillLeftLoop( const int &mDelay, const byte &x )
+{
+	for (byte i = 0, j = 0; i < _size - x; j = i, ++i)
+		set2Channel(_channels[j], _channels[i], LOW, mDelay);
+}
+
+void	ChaseLight::fillRightLoop( const int &mDelay, const byte &x)
+{
+	for (byte i = 0, j = 0, pos = this->_size - 1; i < _size - x; j = i, ++i)
+		set2Channel(_channels[pos - j], _channels[pos - i], LOW, mDelay);
 }
