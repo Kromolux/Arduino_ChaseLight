@@ -56,7 +56,7 @@ void	ChaseLight::setmDelay( const int &mDelay )
 	@param first Channel to value. Has to be the output pin.
 	@param second Channel to !value. Has to be the output pin.
 	@param mDelay Delay in miliseconds after digitalWrite.
-	@param value LOW = 0 turned of - HIGH = 1 turned on.
+	@param value LOW = 0 turned off - HIGH = 1 turned on.
 	@return Nothing.
 */
 void	ChaseLight::set2Channel(const myByte &first, const myByte &second, const myByte &value, const int &mDelay)
@@ -68,7 +68,7 @@ void	ChaseLight::set2Channel(const myByte &first, const myByte &second, const my
 
 /**
 	@brief Set all channels to value.
-	@param value LOW = 0 turned of - HIGH = 1 turned on.
+	@param value LOW = 0 turned off - HIGH = 1 turned on.
 	@return Nothing.
 */
 void	ChaseLight::setChannelsD( const myByte &value )
@@ -116,17 +116,17 @@ void	ChaseLight::flash( int mDelay = 0, const myByte count = 3 )
 }
 
 /**
-	@brief One light moving in a loop. Can be custumized with first argument setTo.
-	LEFT light starts left and moves to the right.
-	RIGHT light starts right and moves to the left.
-	LEFT_INVERT one light turned of and moves from left to the right.
-	RIGHT_INVERT one light turned of and moves from left to the right.
+	@brief One light moving in a loop. Can be customized with first argument setTo.
+	START_LEFT light starts left and moves to the right.
+	START_RIGHT light starts right and moves to the left.
+	START_LEFT_INVERT one light turned of and moves from left to the right.
+	START_RIGHT_INVERT one light turned of and moves from left to the right.
 	@param setTo Setting for changing direction and invert lights default = LEFT.
 	@param mDelay Delay in miliseconds for moving lights - default = this->mDelay.
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::knightRider( e_setting setTo = LEFT, int mDelay = 0, const myByte &count = 3 )
+void	ChaseLight::knightRider( e_setting setTo = START_LEFT, int mDelay = 0, const myByte &count = 3 )
 {
 	const myByte value = setTo & 0x2;
 	const myByte direction = setTo & 0x1;
@@ -157,82 +157,64 @@ void	ChaseLight::knightRider( e_setting setTo = LEFT, int mDelay = 0, const myBy
 	}
 }
 
-
-
-void	ChaseLight::fillLeft( const int &mDelay = 0, const myByte &count = 3 )
-{	fill(mDelay, count, &ChaseLight::fillLeftLoop, LOW);	}
-
-void	ChaseLight::fillRight( const int &mDelay = 0, const myByte &count = 3 )
-{	fill(mDelay, count, &ChaseLight::fillRightLoop, LOW);	}
-
-void	ChaseLight::fillLeftInverted( const int &mDelay = 0, const myByte &count = 3 )
-{	fill(mDelay, count, &ChaseLight::fillLeftLoop, HIGH);	}
-
-void	ChaseLight::fillRightInverted( const int &mDelay = 0, const myByte &count = 3 )
-{	fill(mDelay, count, &ChaseLight::fillRightLoop, HIGH);	}
-
-
-void	ChaseLight::fill( int mDelay, const myByte &count, void ( ChaseLight::*f )( const int&, const myByte&, const myByte& ), const myByte &value )
+/**
+	@brief One light moving and filling up till all lights turned to !value. Can be customized with first argument setTo and second argument setEmpty.
+	START_LEFT light starts left and moves to the right.
+	START_RIGHT light starts right and moves to the left.
+	START_LEFT_INVERT one light turned of and moves from left to the right.
+	START_RIGHT_INVERT one light turned of and moves from left to the right.
+	EMPTY_NONE will not be emptied.
+	EMPTY_LEFT lights will be emptied moving left.
+	EMPTY_RIGHT lights will be emptied moving right.
+	@param setTo Setting for changing direction and invert lights default = LEFT.
+	@param setEmpty Setting for emptying the filled lights. default = none. 
+	@param mDelay Delay in miliseconds for moving lights - default = this->mDelay.
+	@param count Number of total loops - default = 3.
+	@return Nothing.
+*/
+void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3)
 {
-	if (mDelay == 0)
+	const myByte value = setTo & 0x2;
+	const myByte direction = setTo & 0x1;
+	const myByte empty = setEmpty & 0x1;
+	const myByte directionEmpty = setEmpty & 0x2;
+
+	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
 	
-	for (myByte total = 0; total < count; ++total)
+	setChannelsD( value );
+
+	for ( myByte total = 0; total < count; ++total )
 	{
-		for (myByte i = 0; i < _size; ++i)
-			(this->*f)(mDelay, i, value);
-		delay(mDelay);
-		setChannelsD(value);
-		delay(mDelay);
+		if ( direction == 0)
+		{
+			for ( myByte i = 0; i < _size; ++i )
+				mainLoop( _begin, _end - i, mDelay, value );
+		} else {
+			for ( myByte i = 0; i < _size; ++i )
+				mainLoop( _rbegin, _rend + i, mDelay, value );
+		}
+		if ( empty == 0)
+		{
+			delay(mDelay);
+			setChannelsD(value);
+			delay(mDelay);
+		}
+		else if ( directionEmpty == 0 )
+		{
+			for ( myByte i = 0; i < _size; ++i )
+			{
+				mainLoop( _begin + i, _rend, mDelay, value );
+				digitalWrite( *_begin, value);
+				delay(mDelay);
+			}
+		} else {
+			for ( myByte i = 0; i < _size; ++i )
+			{
+				mainLoop( _rbegin - i , _end, mDelay, value );
+				digitalWrite( *_rbegin, value);
+				delay(mDelay);
+			}
+		}
 	}
-}
-
-void	ChaseLight::fillLeftLoop( const int &mDelay, const myByte &x, const myByte &value)
-{
-	for (myByte i = 0, j = 0; i < _size - x; j = i, ++i)
-		set2Channel(_channels[j], _channels[i], value, mDelay);
-}
-
-void	ChaseLight::fillRightLoop( const int &mDelay, const myByte &x, const myByte &value)
-{
-	for (myByte i = 0, j = 0, pos = this->_size - 1; i < _size - x; j = i, ++i)
-		set2Channel(_channels[pos - j], _channels[pos - i], value, mDelay);
-}
-
-void	ChaseLight::fillLeftEmptyRight( const int &mDelay = 0, const myByte &count = 3 )
-{
-	fillEmpty(mDelay, 3, &ChaseLight::fillLeftLoop, LOW);
-	//fill(mDelay, 1, &ChaseLight::emptyRightLoop, LOW);
-}
-
-void	ChaseLight::fillEmpty( int mDelay, const myByte &count, void (ChaseLight::*f)(const int&, const myByte&, const myByte&), const myByte &value )
-{
-	if (mDelay == 0)
-		mDelay = this->_mDelay;
-	
-	for (myByte total = 0; total < count; ++total)
-	{
-		for (myByte i = 0; i < _size; ++i)
-			(this->*f)(mDelay, i, value);
-
-		for (myByte i = _size; i >= 1; --i )
-			emptyRightLoop(mDelay, i - 1, value);
-			//(this->*ff)(mDelay, i, value);
-		delay(mDelay);
-		setChannelsD(value);
-		delay(mDelay);
-	}
-}
-
-void	ChaseLight::emptyLeftLoop( const int &mDelay, const myByte &x, const myByte &value)
-{
-	for (myByte i = 0, j = 0; i < _size - x; j = i, ++i)
-		set2Channel(_channels[j], _channels[i], value, mDelay);
-}
-
-void	ChaseLight::emptyRightLoop( const int &mDelay, const myByte &startPos, const myByte &value)
-{
-	for (myByte i = startPos, j = startPos; i < _size; j = i, ++i)
-		set2Channel(_channels[j], _channels[i], value, mDelay);
-	digitalWrite(_channels[_size - 1], value);
 }
