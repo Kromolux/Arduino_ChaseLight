@@ -2,7 +2,14 @@
 # define CHASELIGHT_H
 # include <Arduino.h>
 
-typedef	unsigned char byte;
+typedef	unsigned char myByte;
+
+enum e_setting : myByte {
+	LEFT = 0,
+	RIGHT = 1,
+	LEFT_INVERTED = 2,
+	RIGHT_INVERTED = 3,
+};
 
 class ChaseLight
 {
@@ -10,31 +17,40 @@ class ChaseLight
 		ChaseLight( void );
 		~ChaseLight( void );
 
-		void	init( const byte &size, const byte *channels, const int &mDelay );
-		
+		int	init( const myByte &size, const myByte *channels, const int &mDelay );
 		void	setmDelay( const int &mDelay );
 
-		void	flash( int mDelay = 0, const byte count = 3 );
+		void	setChannelsD( const myByte &value );
+		void	set2Channel( const myByte &first, const myByte &second, const myByte &value, const int &mDelay );
 		
-		void	knightRiderLeft( const int &mDelay = 0, const byte &count = 3 );
-		void	knightRiderRight( const int &mDelay = 0, const byte &count = 3 );
-		void	knightRiderLeftInverted( const int &mDelay = 0, const byte &count = 3 );
-		void	knightRiderRightInverted( const int &mDelay = 0, const byte &count = 3 );
+		void	flash( int mDelay = 0, const myByte count = 3 );
+		void	knightRider( e_setting setTo = LEFT, int mDelay = 0, const myByte &count = 3 );
 
-		void	fillLeft( const int &mDelay = 0, const byte &count = 3 );
-		void	fillRight( const int &mDelay = 0, const byte &count = 3 );
+		void	fillLeft( const int &mDelay = 0, const myByte &count = 3 );
+		void	fillRight( const int &mDelay = 0, const myByte &count = 3 );
+		void	fillLeftInverted( const int &mDelay = 0, const myByte &count = 3 );
+		void	fillRightInverted( const int &mDelay = 0, const myByte &count = 3 );
+
+		void	fillLeftEmptyRight( const int &mDelay = 0, const myByte &count = 3 );
 
 	private:
-		void	fill( int mDelay, const byte &count, void (ChaseLight::*f)(const int&, const byte&) );
-		void	fillLeftLoop( const int &mDelay, const byte &x );
-		void	fillRightLoop( const int &mDelay, const byte &x );
+		void	mainLoop( const myByte *start, const myByte *goal, const int &mDelay, const myByte &value);
 
-		void	setChannelsD( const byte &value );
-		void	knightRider( int mDelay, const byte &count, const byte &value, const bool &left);
-		void	set2Channel( const byte &first, const byte &second, const byte &value, const int &mDelay );
-		
-		byte	_size;
-		byte	*_channels;
+		void	fill( int mDelay, const myByte &count, void (ChaseLight::*f)(const int&, const myByte&, const myByte&), const myByte &value );
+		void	fillLeftLoop( const int &mDelay, const myByte &x, const myByte &value );
+		void	fillRightLoop( const int &mDelay, const myByte &x, const myByte &value );
+
+		void	fillEmpty( int mDelay, const myByte &count, void (ChaseLight::*f)(const int&, const myByte&, const myByte&), const myByte &value );
+		void	emptyLeftLoop( const int &mDelay, const myByte &x, const myByte &value);
+		void	emptyRightLoop( const int &mDelay, const myByte &x, const myByte &value);
+
+
+		myByte	_size;
+		myByte	*_channels;
+		myByte	*_begin;
+		myByte	*_end;
+		myByte	*_rbegin;
+		myByte	*_rend;
 		int		_mDelay;
 
 };
