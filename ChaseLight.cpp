@@ -8,6 +8,9 @@ ChaseLight::ChaseLight( void )
 	this->_channels[0] = 0;
 	this->_begin = NULL;
 	this->_end = NULL;
+	this->_rbegin = NULL;
+	this->_rend = NULL;
+	this->_isEven = 0;
 }
 
 ChaseLight::~ChaseLight( void )
@@ -28,19 +31,22 @@ int	ChaseLight::init( const myByte &size, const myByte *channels, const int &mDe
 	this->_mDelay = mDelay;
 	delete [] this->_channels;
 	this->_channels = new myByte[_size];
-	if (this->_channels == NULL)
-		return (1);
-	for (myByte i = 0; i < _size; ++i)
+	if ( this->_channels == NULL )
+		return ( 1 );
+	for ( myByte i = 0; i < _size; ++i )
 	{
 		this->_channels[i] = channels[i];
-		pinMode(this->_channels[i], OUTPUT);
-		digitalWrite(this->_channels[i], LOW);
+		pinMode( this->_channels[i], OUTPUT );
+		digitalWrite( this->_channels[i], LOW );
 	}
 	this->_begin = this->_channels;
 	this->_end = this->_channels + this->_size;
 	this->_rbegin = this->_end - 1;
 	this->_rend = this->_begin - 1;
-	return (0);
+	if ( this->_size % 2 == 0 )
+		this->_isEven = 1;
+	this->_center = static_cast<myByte>( _size / 2 );
+	return ( 0 );
 }
 
 /**
@@ -59,11 +65,31 @@ void	ChaseLight::setmDelay( const int &mDelay )
 	@param value LOW = 0 turned off - HIGH = 1 turned on.
 	@return Nothing.
 */
-void	ChaseLight::set2Channel(const myByte &first, const myByte &second, const myByte &value, const int &mDelay)
+void	ChaseLight::set2Channel( const myByte &first, const myByte &second, const myByte &value, const int &mDelay )
 {
-	digitalWrite(first, value);
-	digitalWrite(second, !value);
-	delay(mDelay);
+	digitalWrite( first, value );
+	digitalWrite( second, !value );
+	delay( mDelay );
+}
+
+/**
+	@brief Set firstPrev and secondPrev channel to value and first and second to !value. Delays afterwards.
+	@param firstPrev Channel to value. Has to be the output pin.
+	@param secondPrev Channel to value. Has to be the output pin.
+	@param first Channel to value. Has to be the output pin.
+	@param second Channel to value. Has to be the output pin.
+	@param mDelay Delay in miliseconds after digitalWrite.
+	@param value LOW = 0 turned off - HIGH = 1 turned on.
+	@return Nothing.
+*/
+void	ChaseLight::set4Channel( const myByte &firstPrev, const myByte &secondPrev,
+		const myByte &first, const myByte &second, const myByte &value, const int &mDelay )
+{
+	digitalWrite( firstPrev, value );
+	digitalWrite( secondPrev, value );
+	digitalWrite( first, !value );
+	digitalWrite( second, !value );
+	delay( mDelay );
 }
 
 /**
@@ -73,8 +99,8 @@ void	ChaseLight::set2Channel(const myByte &first, const myByte &second, const my
 */
 void	ChaseLight::setChannelsD( const myByte &value )
 {
-	for (myByte *it = this->_begin; it != this->_end; ++it)
-		digitalWrite(*it, value);
+	for ( myByte *it = this->_begin; it != this->_end; ++it )
+		digitalWrite( *it, value );
 }
 
 void	ChaseLight::mainLoop( const myByte *start, const myByte *goal, const int &mDelay, const myByte &value )
@@ -84,14 +110,7 @@ void	ChaseLight::mainLoop( const myByte *start, const myByte *goal, const int &m
 		step = -1;
 
 	for ( myByte *it = start, *previous = start; it != goal; previous = it, it += step )
-		set2Channel(*previous, *it, value, mDelay);
-	/*
-	{
-		digitalWrite( *previous, value );
-		digitalWrite( *it, !value );
-		delay( mDelay );
-	}
-	*/
+		set2Channel( *previous, *it, value, mDelay );
 }
 
 /**
@@ -102,25 +121,25 @@ void	ChaseLight::mainLoop( const myByte *start, const myByte *goal, const int &m
 */
 void	ChaseLight::flash( int mDelay = 0, const myByte count = 3 )
 {
-	if (mDelay == 0)
+	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
 
-	for (myByte i = 0; i < count; ++i)
+	for (myByte i = 0; i < count; ++i )
 	{
-		setChannelsD(LOW);
-		delay(mDelay);
-		setChannelsD(HIGH);
-		delay(mDelay);
+		setChannelsD( LOW );
+		delay( mDelay );
+		setChannelsD( HIGH );
+		delay( mDelay );
 	}
-	setChannelsD(LOW);
+	setChannelsD( LOW );
 }
 
 /**
 	@brief One light moving in a loop. Can be customized with first argument setTo.
-	START_LEFT light starts left and moves to the right.
-	START_RIGHT light starts right and moves to the left.
-	START_LEFT_INVERT one light turned of and moves from left to the right.
-	START_RIGHT_INVERT one light turned of and moves from left to the right.
+	START_LEFT = light starts left and moves to the right.
+	START_RIGHT = light starts right and moves to the left.
+	START_LEFT_INVERT = one light turned off and moves from left to the right.
+	START_RIGHT_INVERT = one light turned off and moves from left to the right.
 	@param setTo Setting for changing direction and invert lights default = LEFT.
 	@param mDelay Delay in miliseconds for moving lights - default = this->mDelay.
 	@param count Number of total loops - default = 3.
@@ -159,20 +178,20 @@ void	ChaseLight::knightRider( e_setting setTo = START_LEFT, int mDelay = 0, cons
 
 /**
 	@brief One light moving and filling up till all lights turned to !value. Can be customized with first argument setTo and second argument setEmpty.
-	START_LEFT light starts left and moves to the right.
-	START_RIGHT light starts right and moves to the left.
-	START_LEFT_INVERT one light turned of and moves from left to the right.
-	START_RIGHT_INVERT one light turned of and moves from left to the right.
-	EMPTY_NONE will not be emptied.
-	EMPTY_LEFT lights will be emptied moving left.
-	EMPTY_RIGHT lights will be emptied moving right.
+	START_LEFT = light starts left and moves to the right.
+	START_RIGHT = light starts right and moves to the left.
+	START_LEFT_INVERT = one light turned off and moves from left to the right.
+	START_RIGHT_INVERT = one light turned off and moves from left to the right.
+	EMPTY_NONE = will not be emptied.
+	EMPTY_LEFT = lights will be emptied moving left.
+	EMPTY_RIGHT = lights will be emptied moving right.
 	@param setTo Setting for changing direction and invert lights default = LEFT.
 	@param setEmpty Setting for emptying the filled lights. default = none. 
 	@param mDelay Delay in miliseconds for moving lights - default = this->mDelay.
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3)
+void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 )
 {
 	const myByte value = setTo & 0x2;
 	const myByte direction = setTo & 0x1;
@@ -196,25 +215,84 @@ void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_
 		}
 		if ( empty == 0)
 		{
-			delay(mDelay);
-			setChannelsD(value);
-			delay(mDelay);
+			delay( mDelay );
+			setChannelsD( value );
+			delay( mDelay );
 		}
 		else if ( directionEmpty == 0 )
 		{
 			for ( myByte i = 0; i < _size; ++i )
 			{
 				mainLoop( _begin + i, _rend, mDelay, value );
-				digitalWrite( *_begin, value);
-				delay(mDelay);
+				digitalWrite( *_begin, value );
+				delay( mDelay );
 			}
 		} else {
 			for ( myByte i = 0; i < _size; ++i )
 			{
 				mainLoop( _rbegin - i , _end, mDelay, value );
-				digitalWrite( *_rbegin, value);
-				delay(mDelay);
+				digitalWrite( *_rbegin, value );
+				delay( mDelay );
 			}
 		}
 	}
+}
+
+/**
+	@brief Two lights moving from the inside to the outside and then returning back to the inside.
+	Can be customized with first argument setTo.
+	START_INSIDE = start in the middle moves to the ends.
+	START_OUTSIDE = start at the ends and moves to the middle.
+	START_MIDDLE_INVERTED = start in the middle moves to the ends inverted lights.
+	START_INSIDe_INVERTED = start at the ends and moves to the middle inverted lights.
+	@param setTo Setting for changing direction and invert lights default = START_MIDDLE.
+	@param mDelay Delay in miliseconds for moving lights - default = this->mDelay.
+	@param count Number of total loops - default = 3.
+	@return Nothing.
+*/
+void	ChaseLight::knightRiderMiddle( e_setMiddle setTo = START_INSIDE, int mDelay = 0, const myByte &count = 3 )
+{
+	const myByte value = setTo & 0x2;
+	const myByte direction = setTo & 0x1;
+
+	if ( mDelay == 0 )
+		mDelay = this->_mDelay;
+	setChannelsD( value );
+
+	myByte *itLeft = &_channels[_center - _isEven];
+	myByte *itLeftPrev = itLeft;
+	myByte *itRight = &_channels[_center];
+	myByte *itRightPrev = itRight;
+	myByte *itMiddle = &_channels[_center - _isEven];
+
+	if ( direction == 0 )
+	{
+		for ( myByte total = 0; total < count; ++total )
+		{
+			for ( ; itRight != _end; itLeftPrev = itLeft, --itLeft, itRightPrev = itRight, ++itRight )
+				set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
+
+			itLeftPrev = ++itLeft;
+			itRightPrev = --itRight;
+			++itLeft;
+			--itRight;
+
+			for ( ; itLeft != itMiddle; itLeftPrev = itLeft, ++itLeft, itRightPrev = itRight, --itRight )
+				set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
+		}
+	} else {
+		itLeftPrev = itLeft = _begin;
+		itRightPrev = itRight = _rbegin;
+
+		for ( myByte total = 0; total < count; ++total )
+		{
+			for ( ; itLeft != itMiddle; itLeftPrev = itLeft, ++itLeft, itRightPrev = itRight, --itRight )
+				set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
+
+			for ( ; itRight != _rbegin; itLeftPrev = itLeft, --itLeft, itRightPrev = itRight, ++itRight )
+				set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
+		}
+	}
+	set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
+	setChannelsD( value );
 }
