@@ -33,17 +33,21 @@ class ChaseLight
 		int		init( const myByte &size, const myByte *channels, const int &mDelay );
 		void	setmDelay( const int &mDelay );
 
-		void	setChannelsD( const myByte &value );
+		void	setAllChannelsD( const myByte &value );
+		void	set1Channel( const myByte &first, const myByte &second, const myByte &value, const int &mDelay );
 		void	set2Channel( const myByte &first, const myByte &second, const myByte &value, const int &mDelay );
-		void	set4Channel( const myByte &firstPrev, const myByte &secondPrev, const myByte &first, const myByte &second, const myByte &value, const int &mDelay );
+		void	set4Channel( const myByte &firstPrev, const myByte &secondPrev, const myByte &first, const myByte &second,
+				const myByte &value, const int &mDelay );
 
 		void	flash( int mDelay = 0, const myByte count = 3 );
 		void	knightRider( e_setting setTo = START_LEFT, int mDelay = 0, const myByte &count = 3 );
 		void	knightRiderMiddle( e_setMiddle setTo = START_INSIDE, int mDelay = 0, const myByte &count = 3 );
-		void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3);
+		void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
+		void	fillTo( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
 
 	private:
-		void	mainLoop( const myByte *start, const myByte *goal, const int &mDelay, const myByte &value);
+		void	mainLoop( const myByte *start, const myByte *goal, const int &mDelay, const myByte &value,
+				void (ChaseLight::*setChannel)( const myByte&, const myByte&, const myByte&, const int& ) );
 
 		myByte	_size;
 		myByte	_center;
