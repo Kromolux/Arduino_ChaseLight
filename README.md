@@ -156,17 +156,30 @@ void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDela
 `count` Number of total loops - default = 3. <br>
 `return` Nothing.
 
-
+### EMPTY_NONE
 `Light.fillUp( START_LEFT, EMPTY_NONE );`
+
+![](https://user-images.githubusercontent.com/104884267/214897561-c069aaed-9fa5-4b10-817f-3eac08d3f07b.gif)
+
 
 `Light.fillUp( START_RIGHT, EMPTY_NONE );`
 
+![](https://user-images.githubusercontent.com/104884267/214897615-07e4fd0a-c5e7-432b-9b1c-2c5deca76aa6.gif)
+
 `Light.fillUp( START_LEFT_INVERTED, EMPTY_NONE );`
+
+![](https://user-images.githubusercontent.com/104884267/214900929-d2d9a5d3-9451-44ba-9612-95fe7d97d17a.gif)
+
 
 `Light.fillUp( START_RIGHT_INVERTED, EMPTY_NONE );`
 
+![](https://user-images.githubusercontent.com/104884267/214901017-78361af7-e10b-4df7-973b-0689f11f264c.gif)
 
+### EMPTY_LEFT
 `Light.fillUp( START_LEFT, EMPTY_LEFT );`
+
+![](https://user-images.githubusercontent.com/104884267/214907446-6fa7e2b2-effd-4111-8588-c5ac613a2181.gif)
+
 
 `Light.fillUp( START_RIGHT, EMPTY_LEFT );`
 
