@@ -46,7 +46,7 @@ class ChaseLight
 		void	fillTo( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
 
 	private:
-		void	mainLoop( const myByte *start, const myByte *goal, const int &mDelay, const myByte &value,
+		void	mainLoop( myByte *start, myByte *goal, const int &mDelay, const myByte &value,
 				void (ChaseLight::*setChannel)( const myByte&, const myByte&, const myByte&, const int& ) );
 
 		myByte	_size;

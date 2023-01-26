@@ -67,6 +67,7 @@ void	ChaseLight::setmDelay( const int &mDelay )
 */
 void	ChaseLight::set1Channel( const myByte &first, const myByte &second, const myByte &value, const int &mDelay )
 {
+	(void) first;
 	digitalWrite( second, !value );
 	delay( mDelay );
 }
@@ -117,7 +118,7 @@ void	ChaseLight::setAllChannelsD( const myByte &value )
 		digitalWrite( *it, value );
 }
 
-void	ChaseLight::mainLoop( const myByte *start, const myByte *goal, const int &mDelay, const myByte &value,
+void	ChaseLight::mainLoop( myByte *start, myByte *goal, const int &mDelay, const myByte &value,
 		void (ChaseLight::*setChannel)( const myByte&, const myByte&, const myByte&, const int& ) )
 {
 	signed char step = 1;
@@ -134,7 +135,7 @@ void	ChaseLight::mainLoop( const myByte *start, const myByte *goal, const int &m
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::flash( int mDelay = 0, const myByte count = 3 )
+void	ChaseLight::flash( int mDelay, const myByte count )
 {
 	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
@@ -160,7 +161,7 @@ void	ChaseLight::flash( int mDelay = 0, const myByte count = 3 )
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::knightRider( e_setting setTo = START_LEFT, int mDelay = 0, const myByte &count = 3 )
+void	ChaseLight::knightRider( e_setting setTo, int mDelay, const myByte &count )
 {
 	const myByte value = setTo & 0x2;
 	const myByte direction = setTo & 0x1;
@@ -173,18 +174,18 @@ void	ChaseLight::knightRider( e_setting setTo = START_LEFT, int mDelay = 0, cons
 	{
 		for ( myByte total = 0; total < count; ++total )
 		{
-			mainLoop( _begin, _end, mDelay, value, &set2Channel );
+			mainLoop( _begin, _end, mDelay, value, &ChaseLight::set2Channel );
 			digitalWrite( *_rbegin, value );
-			mainLoop( (_rbegin -1) , _begin, mDelay, value, &set2Channel );
+			mainLoop( (_rbegin -1) , _begin, mDelay, value, &ChaseLight::set2Channel );
 			digitalWrite( *(_begin + 1), value );
 		}
 		set2Channel( *_begin + 1, *_begin, value, mDelay );
 	} else {
 		for ( myByte total = 0; total < count; ++total )
 		{
-			mainLoop( _rbegin, _rend, mDelay, value, &set2Channel );
+			mainLoop( _rbegin, _rend, mDelay, value, &ChaseLight::set2Channel );
 			digitalWrite( *_begin, value );
-			mainLoop( (_begin + 1), _rbegin, mDelay, value, &set2Channel );
+			mainLoop( (_begin + 1), _rbegin, mDelay, value, &ChaseLight::set2Channel );
 			digitalWrite( *(_rbegin - 1), value );
 		}
 		set2Channel( *_rbegin - 1, *_rbegin, value, mDelay );
@@ -203,7 +204,7 @@ void	ChaseLight::knightRider( e_setting setTo = START_LEFT, int mDelay = 0, cons
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::knightRiderMiddle( e_setMiddle setTo = START_INSIDE, int mDelay = 0, const myByte &count = 3 )
+void	ChaseLight::knightRiderMiddle( e_setMiddle setTo, int mDelay, const myByte &count )
 {
 	const myByte value = setTo & 0x2;
 	const myByte direction = setTo & 0x1;
@@ -265,7 +266,7 @@ void	ChaseLight::knightRiderMiddle( e_setMiddle setTo = START_INSIDE, int mDelay
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 )
+void	ChaseLight::fillUp( e_setting setTo, e_empty setEmpty, int mDelay, const myByte &count )
 {
 	const myByte value = setTo & 0x2;
 	const myByte direction = setTo & 0x1;
@@ -282,10 +283,10 @@ void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_
 		if ( direction == START_LEFT)
 		{
 			for ( myByte i = 0; i < _size; ++i )
-				mainLoop( _begin, _end - i, mDelay, value, &set2Channel );
+				mainLoop( _begin, _end - i, mDelay, value, &ChaseLight::set2Channel );
 		} else {
 			for ( myByte i = 0; i < _size; ++i )
-				mainLoop( _rbegin, _rend + i, mDelay, value, &set2Channel );
+				mainLoop( _rbegin, _rend + i, mDelay, value, &ChaseLight::set2Channel );
 		}
 		if ( empty == EMPTY_NONE)
 		{
@@ -296,14 +297,14 @@ void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_
 		{
 			for ( myByte i = 0; i < _size; ++i )
 			{
-				mainLoop( _begin + i, _rend, mDelay, value, &set2Channel );
+				mainLoop( _begin + i, _rend, mDelay, value, &ChaseLight::set2Channel );
 				digitalWrite( *_begin, value );
 				delay( mDelay );
 			}
 		} else {
 			for ( myByte i = 0; i < _size; ++i )
 			{
-				mainLoop( _rbegin - i , _end, mDelay, value, &set2Channel );
+				mainLoop( _rbegin - i , _end, mDelay, value, &ChaseLight::set2Channel );
 				digitalWrite( *_rbegin, value );
 				delay( mDelay );
 			}
@@ -327,7 +328,7 @@ void	ChaseLight::fillUp( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::fillTo( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 )
+void	ChaseLight::fillTo( e_setting setTo, e_empty setEmpty, int mDelay, const myByte &count )
 {
 	const myByte value = setTo & 0x2;
 	const myByte direction = setTo & 0x1;
@@ -342,9 +343,9 @@ void	ChaseLight::fillTo( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_
 	for ( myByte total = 0; total < count; ++total )
 	{
 		if ( direction == START_LEFT)
-			mainLoop( _begin, _end, mDelay, value, &set1Channel );
+			mainLoop( _begin, _end, mDelay, value, &ChaseLight::set1Channel );
 		else
-			mainLoop( _rbegin, _rend, mDelay, value, &set1Channel );
+			mainLoop( _rbegin, _rend, mDelay, value, &ChaseLight::set1Channel );
 
 		if ( empty == EMPTY_NONE )
 		{
@@ -352,8 +353,8 @@ void	ChaseLight::fillTo( e_setting setTo = START_LEFT, e_empty setEmpty = EMPTY_
 			delay( mDelay );
 		}
 		else if ( directionEmpty == 0 )
-			mainLoop( _begin, _end, mDelay, !value, &set1Channel );
+			mainLoop( _begin, _end, mDelay, !value, &ChaseLight::set1Channel );
 		else
-			mainLoop( _rbegin, _rend, mDelay, !value, &set1Channel );
+			mainLoop( _rbegin, _rend, mDelay, !value, &ChaseLight::set1Channel );
 	}
 }
