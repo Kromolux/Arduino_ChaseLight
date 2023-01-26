@@ -156,6 +156,34 @@ void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDela
 `count` Number of total loops - default = 3. <br>
 `return` Nothing.
 
+
+`Light.fillUp( START_LEFT, EMPTY_NONE );`
+
+`Light.fillUp( START_RIGHT, EMPTY_NONE );`
+
+`Light.fillUp( START_LEFT_INVERTED, EMPTY_NONE );`
+
+`Light.fillUp( START_RIGHT_INVERTED, EMPTY_NONE );`
+
+
+`Light.fillUp( START_LEFT, EMPTY_LEFT );`
+
+`Light.fillUp( START_RIGHT, EMPTY_LEFT );`
+
+`Light.fillUp( START_LEFT_INVERTED, EMPTY_LEFT );`
+
+`Light.fillUp( START_RIGHT_INVERTED, EMPTY_LEFT );`
+
+
+
+`Light.fillUp( START_LEFT, EMPTY_RIGHT );`
+
+`Light.fillUp( START_RIGHT, EMPTY_RIGHT );`
+
+`Light.fillUp( START_LEFT_INVERTED, EMPTY_RIGHT );`
+
+`Light.fillUp( START_RIGHT_INVERTED, EMPTY_RIGHT );`
+
 ## fillTo
 ```C
 void	fillTo( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
@@ -175,3 +203,32 @@ Can be customized with first argument setTo and second argument setEmpty. <br>
 `mDelay` Delay in miliseconds for moving lights - default = this->mDelay. <br>
 `count` Number of total loops - default = 3. <br>
 `return` Nothing.
+
+
+`Light.fillTo( START_LEFT, EMPTY_NONE );`
+
+`Light.fillTo( START_RIGHT, EMPTY_NONE );`
+
+`Light.fillTo( START_LEFT_INVERTED, EMPTY_NONE );`
+
+`Light.fillTo( START_RIGHT_INVERTED, EMPTY_NONE );`
+
+
+`Light.fillTo( START_LEFT, EMPTY_LEFT );`
+
+`Light.fillTo( START_RIGHT, EMPTY_LEFT );`
+
+`Light.fillTo( START_LEFT_INVERTED, EMPTY_LEFT );`
+
+`Light.fillTo( START_RIGHT_INVERTED, EMPTY_LEFT );`
+
+
+
+`Light.fillTo( START_LEFT, EMPTY_RIGHT );`
+
+`Light.fillTo( START_RIGHT, EMPTY_RIGHT );`
+
+`Light.fillTo( START_LEFT_INVERTED, EMPTY_RIGHT );`
+
+`Light.fillTo( START_RIGHT_INVERTED, EMPTY_RIGHT );`
+
