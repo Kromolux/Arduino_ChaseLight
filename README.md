@@ -126,6 +126,17 @@ Can be customized with first argument setTo. <br>
 
 ![](https://user-images.githubusercontent.com/104884267/214871554-aff474a3-46b6-4dda-9793-cf428b1a60da.gif)
 
+
+`Light.knightRiderMiddle( START_INSIDE_INVERTED );`
+
+![](https://user-images.githubusercontent.com/104884267/214879289-d1362ac2-7d12-4745-b13d-d13d6585dd6d.gif)
+
+`Light.knightRiderMiddle( START_OUTSIDE_INVERTED );`
+
+![](https://user-images.githubusercontent.com/104884267/214883310-aef81adc-79ca-47a7-b50f-da9872c1f996.gif)
+
+
+
 ## fillUp
 ```C
 void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
