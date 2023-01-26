@@ -148,6 +148,7 @@ void	ChaseLight::flash( int mDelay, const myByte count )
 		delay( mDelay );
 	}
 	setAllChannelsD( LOW );
+	delay( mDelay );
 }
 
 /**
@@ -163,12 +164,13 @@ void	ChaseLight::flash( int mDelay, const myByte count )
 */
 void	ChaseLight::knightRider( e_setting setTo, int mDelay, const myByte &count )
 {
-	const myByte value = setTo & 0x2;
+	const myByte value = (setTo > 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 
 	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
 	setAllChannelsD( value );
+	delay( mDelay );
 
 	if ( direction == START_LEFT )
 	{
@@ -190,6 +192,13 @@ void	ChaseLight::knightRider( e_setting setTo, int mDelay, const myByte &count )
 		}
 		set2Channel( *_rbegin - 1, *_rbegin, value, mDelay );
 	}
+	setAllChannelsD( value );
+	delay( mDelay );
+	if (value == 1)
+	{
+		setAllChannelsD( LOW );
+		delay( mDelay );
+	}
 }
 
 /**
@@ -206,12 +215,13 @@ void	ChaseLight::knightRider( e_setting setTo, int mDelay, const myByte &count )
 */
 void	ChaseLight::knightRiderMiddle( e_setMiddle setTo, int mDelay, const myByte &count )
 {
-	const myByte value = setTo & 0x2;
+	const myByte value = (setTo > 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 
 	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
 	setAllChannelsD( value );
+	delay( mDelay );
 
 	myByte *itLeft = &_channels[_center - _isEven];
 	myByte *itLeftPrev = itLeft;
@@ -249,6 +259,12 @@ void	ChaseLight::knightRiderMiddle( e_setMiddle setTo, int mDelay, const myByte 
 	}
 	set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
 	setAllChannelsD( value );
+	delay( mDelay );
+	if (value == 1)
+	{
+		setAllChannelsD( LOW );
+		delay( mDelay );
+	}
 }
 
 /**
@@ -268,15 +284,16 @@ void	ChaseLight::knightRiderMiddle( e_setMiddle setTo, int mDelay, const myByte 
 */
 void	ChaseLight::fillUp( e_setting setTo, e_empty setEmpty, int mDelay, const myByte &count )
 {
-	const myByte value = setTo & 0x2;
+	const myByte value = (setTo > 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 	const myByte empty = setEmpty & 0x1;
-	const myByte directionEmpty = setEmpty & 0x2;
+	const myByte directionEmpty = (setEmpty > 1) & 0x1;
 
 	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
 	
 	setAllChannelsD( value );
+	delay( mDelay );
 
 	for ( myByte total = 0; total < count; ++total )
 	{
@@ -288,26 +305,30 @@ void	ChaseLight::fillUp( e_setting setTo, e_empty setEmpty, int mDelay, const my
 			for ( myByte i = 0; i < _size; ++i )
 				mainLoop( _rbegin, _rend + i, mDelay, value, &ChaseLight::set2Channel );
 		}
-		if ( empty == EMPTY_NONE)
+		if (empty == 1)
 		{
-			setAllChannelsD( value );
+			if ( directionEmpty == 0 )
+			{
+				digitalWrite( *_begin, value );
+				for ( myByte i = 1; i < _size; ++i )
+				{
+					mainLoop( _begin + i, _rend, mDelay, value, &ChaseLight::set2Channel );
+					digitalWrite( *_begin, value );
+				}
+			} else {
+				digitalWrite( *_rbegin, value );
+				for ( myByte i = 1; i < _size; ++i )
+				{
+					mainLoop( _rbegin - i , _end, mDelay, value, &ChaseLight::set2Channel );
+					digitalWrite( *_rbegin, value );
+				}
+			}
 			delay( mDelay );
 		}
-		else if ( directionEmpty == 0 )
+		if ( value == 0 && empty == 0 || value == 1 && empty == 1)
 		{
-			for ( myByte i = 0; i < _size; ++i )
-			{
-				mainLoop( _begin + i, _rend, mDelay, value, &ChaseLight::set2Channel );
-				digitalWrite( *_begin, value );
-				delay( mDelay );
-			}
-		} else {
-			for ( myByte i = 0; i < _size; ++i )
-			{
-				mainLoop( _rbegin - i , _end, mDelay, value, &ChaseLight::set2Channel );
-				digitalWrite( *_rbegin, value );
-				delay( mDelay );
-			}
+			setAllChannelsD( LOW );
+			delay( mDelay );
 		}
 	}
 }
@@ -330,15 +351,16 @@ void	ChaseLight::fillUp( e_setting setTo, e_empty setEmpty, int mDelay, const my
 */
 void	ChaseLight::fillTo( e_setting setTo, e_empty setEmpty, int mDelay, const myByte &count )
 {
-	const myByte value = setTo & 0x2;
+	const myByte value = (setTo > 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 	const myByte empty = setEmpty & 0x1;
-	const myByte directionEmpty = setEmpty & 0x2;
+	const myByte directionEmpty = (setEmpty > 1) & 0x1;
 
 	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
 	
 	setAllChannelsD( value );
+	delay( mDelay );
 
 	for ( myByte total = 0; total < count; ++total )
 	{
@@ -349,7 +371,7 @@ void	ChaseLight::fillTo( e_setting setTo, e_empty setEmpty, int mDelay, const my
 
 		if ( empty == EMPTY_NONE )
 		{
-			setAllChannelsD( value );
+			setAllChannelsD( LOW );
 			delay( mDelay );
 		}
 		else if ( directionEmpty == 0 )
