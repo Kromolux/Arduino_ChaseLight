@@ -246,31 +246,54 @@ Can be customized with first argument setTo and second argument setEmpty. <br>
 `count` Number of total loops - default = 3. <br>
 `return` Nothing.
 
-
+### EMPTY_NONE
 `Light.fillTo( START_LEFT, EMPTY_NONE );`
+
+![23fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937894-adaf5334-2988-4eab-99ca-198854507715.gif)
 
 `Light.fillTo( START_RIGHT, EMPTY_NONE );`
 
+![24fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937875-a11d5460-f5d7-47a1-bc75-cbcd7d4de6ec.gif)
+
 `Light.fillTo( START_LEFT_INVERTED, EMPTY_NONE );`
+
+![25fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937846-9eb3f157-fa69-461d-9c24-e90e46fdd614.gif)
 
 `Light.fillTo( START_RIGHT_INVERTED, EMPTY_NONE );`
 
+![26fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937812-40df9fae-aaba-42bb-8fb8-901a3be25a6c.gif)
 
+### EMPTY_LEFT
 `Light.fillTo( START_LEFT, EMPTY_LEFT );`
+
+![27fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937788-48998659-d8f3-443a-bc62-2b0a43972b81.gif)
 
 `Light.fillTo( START_RIGHT, EMPTY_LEFT );`
 
+![28fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937769-b1b01bc4-9e4d-4738-8cf7-52da375083a6.gif)
+
 `Light.fillTo( START_LEFT_INVERTED, EMPTY_LEFT );`
+
+![29fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937743-d1fddf3e-e5ae-4c72-9b03-d814ded9cad5.gif)
 
 `Light.fillTo( START_RIGHT_INVERTED, EMPTY_LEFT );`
 
+![30fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937716-d0c55cd4-851c-4724-8893-023fe4cadb70.gif)
 
 
+### EMPTY_RIGHT
 `Light.fillTo( START_LEFT, EMPTY_RIGHT );`
+
+![31fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937689-f307c296-6369-48f4-a6d9-5ef1aab87faa.gif)
 
 `Light.fillTo( START_RIGHT, EMPTY_RIGHT );`
 
+![32fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937667-920bdcf5-d270-4d5d-a3a0-1ba41d1354a1.gif)
+
 `Light.fillTo( START_LEFT_INVERTED, EMPTY_RIGHT );`
+
+![33fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937649-e5be4e69-a39a-4fb7-9d5c-477a017cc5b1.gif)
 
 `Light.fillTo( START_RIGHT_INVERTED, EMPTY_RIGHT );`
 
+![34fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937607-561f6768-12fa-4611-85f1-6d69183046eb.gif)
