@@ -1,13 +1,12 @@
 #include <ChaseLight.h>
 
-ChaseLight Light;
+ChaseLightTime Light;
 
 void	setup(void)
 {
-	const myByte size = 12;
-	const myByte channels[size] = {9, 10, 8, 7, 4, 5, 6, 3, 2, 11, 12, 13};
+	const myByte channels[] = {9, 10, 8, 7, 4, 5, 6, 3, 2, 11, 12, 13};
 
-	if (Light.init(size, channels, 80) == 0)
+	if (Light.init(sizeof(channels), channels, 80) == 0)
 		Light.flash(50);
 }
 

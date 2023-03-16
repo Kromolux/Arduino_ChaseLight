@@ -1,6 +1,12 @@
 #ifndef CHASELIGHT_H
 # define CHASELIGHT_H
-# include <Arduino.h>
+# ifndef DEBUG
+#  define DEBUG 0
+#  include <Arduino.h>
+# endif
+# if DEBUG
+#  include "debug/ChaseLightDebug.h"
+# endif
 
 typedef	unsigned char myByte;
 
