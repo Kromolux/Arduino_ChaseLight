@@ -58,6 +58,21 @@ class ChaseLight
 		myByte	*_rbegin;
 		myByte	*_rend;
 		int		_mDelay;
+		void	( *myPinMode ) ( myByte channel, myByte value );
+		void	( *myDelay ) ( long unsigned int time );
+		void	( *myDigitalWrite ) (myByte channel, myByte value );
+
+
+};
+
+
+class ChaseLightTime : public ChaseLight
+{
+	public:
+		ChaseLightTime( void );
+		~ChaseLightTime( void );
+
+	private:
 
 };
 
