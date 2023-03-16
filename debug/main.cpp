@@ -31,6 +31,6 @@ int	main(void)
 
 	Light.init(sizeof(channels), channels, 80);
 
-	Light.fillTo();
+	Light.fillTo(START_LEFT, EMPTY_RIGHT, 80, 2);
 	return (0);
 }

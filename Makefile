@@ -4,8 +4,8 @@ OBJ_FOLDER	:=	obj
 
 CC			:=	c++
 
-SRCS		:=	main.cpp \
-				../ChaseLight.cpp
+SRCS		:=	debug/main.cpp \
+				ChaseLight.cpp
 
 OBJS		:=	$(SRCS:%.cpp=$(OBJ_FOLDER)/%.o)
 
