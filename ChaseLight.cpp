@@ -34,14 +34,17 @@ int	ChaseLight::init( const myByte &size, const myByte *channels, const int &mDe
 	this->_mDelay = mDelay;
 	delete [] this->_channels;
 	this->_channels = new myByte[_size];
+
 	if ( this->_channels == NULL )
 		return ( 1 );
+
 	for ( myByte i = 0; i < _size; ++i )
 	{
 		this->_channels[i] = channels[i];
 		myPinMode( this->_channels[i], OUTPUT );
 		myDigitalWrite( this->_channels[i], LOW );
 	}
+
 	this->_begin = this->_channels;
 	this->_end = this->_channels + this->_size;
 	this->_rbegin = this->_end - 1;
@@ -49,6 +52,7 @@ int	ChaseLight::init( const myByte &size, const myByte *channels, const int &mDe
 	if ( this->_size % 2 == 0 )
 		this->_isEven = 1;
 	this->_center = static_cast<myByte>( _size / 2 );
+
 	return ( 0 );
 }
 
@@ -58,7 +62,9 @@ int	ChaseLight::init( const myByte &size, const myByte *channels, const int &mDe
 	@return Nothing.
 */
 void	ChaseLight::setmDelay( const int &mDelay )
-{	this->_mDelay = mDelay;	}
+{
+	this->_mDelay = mDelay;
+}
 
 /**
 	@brief Ignores first channel and sets second channel to !value. Delays afterwards.
@@ -150,6 +156,7 @@ void	ChaseLight::flash( int mDelay, const myByte count )
 		setAllChannelsD( HIGH );
 		myDelay( mDelay );
 	}
+
 	setAllChannelsD( LOW );
 	myDelay( mDelay );
 }
@@ -195,6 +202,7 @@ void	ChaseLight::knightRider( e_setting setTo, int mDelay, const myByte &count )
 		}
 		set2Channel( *_rbegin - 1, *_rbegin, value, mDelay );
 	}
+
 	setAllChannelsD( value );
 	myDelay( mDelay );
 	if (value == 1)
@@ -260,6 +268,7 @@ void	ChaseLight::knightRiderMiddle( e_setMiddle setTo, int mDelay, const myByte 
 				set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
 		}
 	}
+
 	set4Channel( *itLeftPrev, *itRightPrev, *itLeft, *itRight, value, mDelay );
 	setAllChannelsD( value );
 	myDelay( mDelay );

@@ -51,9 +51,9 @@ class ChaseLight
 		void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
 		void	fillTo( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
 
-	private:
+	protected:
 		void	basicLoop( myByte *start, myByte *goal, const int &mDelay, const myByte &value,
-				void (ChaseLight::*setChannel)( const myByte&, const myByte&, const myByte&, const int& ) );
+				void ( ChaseLight::*setChannel )( const myByte&, const myByte&, const myByte&, const int& ) );
 
 		myByte	_size;
 		myByte	_center;
@@ -64,6 +64,7 @@ class ChaseLight
 		myByte	*_rbegin;
 		myByte	*_rend;
 		int		_mDelay;
+
 		void	( *myPinMode ) ( myByte channel, myByte value );
 		void	( *myDelay ) ( long unsigned int time );
 		void	( *myDigitalWrite ) ( myByte channel, myByte value );
@@ -77,9 +78,29 @@ class ChaseLightTime : public ChaseLight
 	public:
 		ChaseLightTime( void );
 		~ChaseLightTime( void );
+		void	loopStep( void );
 
 	private:
+		void	incrementSequence( void );
+		void	setOutputs( void );
+		friend void	delayReplace( long unsigned int time );
+		friend void	digitalWriteReplace( unsigned char channel, unsigned char value );
+		void	writeSequence( void );
+		void	reallocate( void );
+
+		unsigned long	_previousTime;
+		unsigned long	_delayTime;
+		unsigned long	( *myMillis ) ( void );
+
+		unsigned int	_sequence;
+		unsigned int	_capacity;
+		unsigned int	_sequenceSize;
+		unsigned int *	_step;
+		unsigned int *	_sequenceSteps;
+		unsigned int	_lastSequenceStep;
 
 };
 
+void	delayReplace( long unsigned int time );
+void	digitalWriteReplace( unsigned char channel, unsigned char value );
 #endif
