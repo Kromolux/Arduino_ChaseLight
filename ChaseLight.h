@@ -72,6 +72,29 @@ class ChaseLight
 
 };
 
+enum e_state : myByte {
+	STOPPED = 0,
+	PLAYING = 1,
+};
+
+class ChaseLightTime;
+
+class Button
+{
+	public:
+		Button( void );
+		Button( myByte const & inputPin, void	( ChaseLightTime::*changeState ) ( void ) );
+		~Button( void );
+
+		void	check( ChaseLightTime & obj );
+		void	( ChaseLightTime::*_changeState ) ( void );
+
+	private:
+		myByte						_inputPin;
+		bool						_buttonPressed;
+		unsigned long				_previousTime;
+		static const unsigned long	_DEBOUNCETIME = 25;
+};
 
 class ChaseLightTime : public ChaseLight
 {
@@ -79,6 +102,12 @@ class ChaseLightTime : public ChaseLight
 		ChaseLightTime( void );
 		~ChaseLightTime( void );
 		void	loopStep( void );
+		void	setOutputs( myByte const & input );
+
+		void	stop( void );
+		void	pauseToggle( void );
+		void	stopToggle( void );
+		void	registerButton( myByte const & inputPin, void	( ChaseLightTime::*changeState ) ( void ) );
 
 	private:
 		void	incrementSequence( void );
@@ -99,8 +128,14 @@ class ChaseLightTime : public ChaseLight
 		unsigned int *	_sequenceSteps;
 		unsigned int	_lastSequenceStep;
 
+		myByte			_state;
+		Button		**	_buttons;
+		myByte			_buttonsSize;
+		myByte			_buttonPos;
 };
 
 void	delayReplace( long unsigned int time );
 void	digitalWriteReplace( unsigned char channel, unsigned char value );
+
+
 #endif

@@ -2,17 +2,18 @@
 
 ChaseLightTime Light;
 
-void	setup(void)
+void	setup( void )
 {
-	const myByte channels[] = {9, 10, 8, 7, 4, 5, 6, 3, 2, 11, 12, 13};
-
-	Light.init(sizeof(channels), channels, 80);
+	const myByte channels[] = { 9, 10, 8, 7, 4, 5, 6, 3, 2, 11, 12, 13 };
+	Light.init( sizeof( channels ), channels, 80 );
 	//Light.fillTo();
 	//Light.flash(50);
-	Light.fillUp(START_LEFT, EMPTY_LEFT, 30, 1);
+	Light.fillUp( START_LEFT, EMPTY_LEFT, 30, 1 );
+	Light.registerButton( 0, &ChaseLightTime::pauseToggle );
+	Light.registerButton( 1, &ChaseLightTime::stopToggle );
 }
 
-void	loop(void)
+void	loop( void )
 {
 	Light.loopStep();
 }

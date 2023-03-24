@@ -1,6 +1,6 @@
 #include <ChaseLight.h>
 
-ChaseLightTime Light;
+ChaseLight Light;
 
 void	setup(void)
 {
