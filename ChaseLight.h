@@ -82,7 +82,6 @@ class ChaseLightTime;
 class Button
 {
 	public:
-		Button( void );
 		Button( myByte const & inputPin, void	( ChaseLightTime::*changeState ) ( void ) );
 		~Button( void );
 
@@ -94,6 +93,10 @@ class Button
 		bool						_buttonPressed;
 		unsigned long				_previousTime;
 		static const unsigned long	_DEBOUNCETIME = 25;
+
+		int	( *myDigitalRead ) ( myByte channel );
+		unsigned long	( *myMillis ) ( void );
+
 };
 
 class ChaseLightTime : public ChaseLight
