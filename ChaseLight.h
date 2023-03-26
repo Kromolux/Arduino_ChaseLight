@@ -48,8 +48,9 @@ class ChaseLight
 		void	flash( const myByte &count = 3, int mDelay = 0 );
 		void	knightRider( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT );
 		void	knightRiderMiddle( const myByte &count = 3, int mDelay = 0, e_setMiddle setTo = START_INSIDE );
-		void	fillUp( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
+		void	moveFillUp( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
 		void	fillTo( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
+		void	move( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
 
 	protected:
 		void	basicLoop( myByte *start, myByte *goal, const int &mDelay, const myByte &value,

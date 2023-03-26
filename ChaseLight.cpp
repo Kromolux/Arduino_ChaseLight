@@ -174,7 +174,7 @@ void	ChaseLight::flash( const myByte &count, int mDelay )
 */
 void	ChaseLight::knightRider( const myByte &count, int mDelay, e_setting setTo )
 {
-	const myByte value = (setTo > 1) & 0x1;
+	const myByte value = (setTo >> 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 
 	if ( mDelay == 0 )
@@ -226,7 +226,7 @@ void	ChaseLight::knightRider( const myByte &count, int mDelay, e_setting setTo )
 */
 void	ChaseLight::knightRiderMiddle( const myByte &count, int mDelay, e_setMiddle setTo )
 {
-	const myByte value = (setTo > 1) & 0x1;
+	const myByte value = (setTo >> 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 
 	if ( mDelay == 0 )
@@ -294,12 +294,12 @@ void	ChaseLight::knightRiderMiddle( const myByte &count, int mDelay, e_setMiddle
 	@param count Number of total loops - default = 3.
 	@return Nothing.
 */
-void	ChaseLight::fillUp( const myByte &count, int mDelay, e_setting setTo, e_empty setEmpty )
+void	ChaseLight::moveFillUp( const myByte &count, int mDelay, e_setting setTo, e_empty setEmpty )
 {
-	const myByte value = (setTo > 1) & 0x1;
+	const myByte value = (setTo >> 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 	const myByte empty = setEmpty & 0x1;
-	const myByte directionEmpty = (setEmpty > 1) & 0x1;
+	const myByte directionEmpty = (setEmpty >> 1) & 0x1;
 
 	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
@@ -363,10 +363,10 @@ void	ChaseLight::fillUp( const myByte &count, int mDelay, e_setting setTo, e_emp
 */
 void	ChaseLight::fillTo( const myByte &count, int mDelay, e_setting setTo, e_empty setEmpty )
 {
-	const myByte value = (setTo > 1) & 0x1;
+	const myByte value = (setTo >> 1) & 0x1;
 	const myByte direction = setTo & 0x1;
 	const myByte empty = setEmpty & 0x1;
-	const myByte directionEmpty = (setEmpty > 1) & 0x1;
+	const myByte directionEmpty = (setEmpty >> 1) & 0x1;
 
 	if ( mDelay == 0 )
 		mDelay = this->_mDelay;
@@ -390,5 +390,48 @@ void	ChaseLight::fillTo( const myByte &count, int mDelay, e_setting setTo, e_emp
 			basicLoop( _begin, _end, mDelay, !value, &ChaseLight::set1Channel );
 		else
 			basicLoop( _rbegin, _rend, mDelay, !value, &ChaseLight::set1Channel );
+	}
+}
+
+/**
+	@brief One light moving from one end to another.
+	START_LEFT = light starts left and moves to the right.
+	START_RIGHT = light starts right and moves to the left.
+	START_LEFT_INVERT = one light turned off moving from left to the right.
+	START_RIGHT_INVERT = one light turned off moving from right to the left.
+	EMPTY_NONE = will not be emptied, light show up on the other side.
+	EMPTY_LEFT = lights will be emptied from left.
+	EMPTY_RIGHT = lights will be emptied from right.
+	@param count Number of total loops - default = 3.
+	@param mDelay Delay in miliseconds for moving lights - default = this->mDelay.
+	@param setTo Setting for changing direction and invert lights default = START_LEFT.
+	@param setEmpty Setting for emptying the filled lights. default = EMPTY_NONE. 
+	@return Nothing.
+*/
+void	ChaseLight::move( const myByte &count, int mDelay, e_setting setTo, e_empty setEmpty )
+{
+	const myByte value = (setTo >> 1) & 0x1;
+	const myByte direction = setTo & 0x1;
+	const myByte empty = setEmpty & 0x1;
+	const myByte directionEmpty = (setEmpty >> 1) & 0x1;
+	(void) empty;
+	(void) directionEmpty;
+
+	if ( mDelay == 0 )
+		mDelay = this->_mDelay;
+	
+	setAllChannelsD( value );
+	myDelay( mDelay );
+
+	for ( myByte total = 0; total < count; ++total )
+	{
+		if ( direction == START_LEFT)
+		{
+			basicLoop( _begin, _end, mDelay, value, &ChaseLight::set2Channel );
+			myDigitalWrite( *_rbegin, value );
+		} else {
+			basicLoop( _rbegin, _rend, mDelay, value, &ChaseLight::set2Channel );
+			myDigitalWrite( *_begin, value );
+		}
 	}
 }
