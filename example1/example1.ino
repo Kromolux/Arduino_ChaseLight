@@ -8,7 +8,7 @@ void	setup( void )
 	Light.init( sizeof( channels ), channels, 80 );
 	//Light.fillTo();
 	//Light.flash(50);
-	Light.fillUp( START_LEFT, EMPTY_LEFT, 30, 1 );
+	Light.fillUp( 1, 30, START_LEFT, EMPTY_LEFT );
 	Light.registerButton( 0, &ChaseLightTime::pauseToggle );
 	Light.registerButton( 1, &ChaseLightTime::stopToggle );
 }

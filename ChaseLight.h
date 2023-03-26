@@ -45,11 +45,11 @@ class ChaseLight
 		void	set4Channel( const myByte &firstPrev, const myByte &secondPrev, const myByte &first, const myByte &second,
 				const myByte &value, const int &mDelay );
 
-		void	flash( int mDelay = 0, const myByte count = 3 );
-		void	knightRider( e_setting setTo = START_LEFT, int mDelay = 0, const myByte &count = 3 );
-		void	knightRiderMiddle( e_setMiddle setTo = START_INSIDE, int mDelay = 0, const myByte &count = 3 );
-		void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
-		void	fillTo( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
+		void	flash( const myByte &count = 3, int mDelay = 0 );
+		void	knightRider( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT );
+		void	knightRiderMiddle( const myByte &count = 3, int mDelay = 0, e_setMiddle setTo = START_INSIDE );
+		void	fillUp( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
+		void	fillTo( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
 
 	protected:
 		void	basicLoop( myByte *start, myByte *goal, const int &mDelay, const myByte &value,

@@ -91,11 +91,16 @@ int	digitalRead( unsigned char channel )
 
 int	main(void)
 {
-	ChaseLightTime Light;
+	ChaseLight Light;
 
 	Light.init(sizeof(channels), channels, 80);
 	std::cout << "\n";
-	Light.fillTo(START_LEFT, EMPTY_RIGHT, 80, 1);
+	Light.fillTo( 1, 80, START_LEFT, EMPTY_RIGHT );
+	Light.flash( 2, 220 );
+	Light.fillUp( 3, 30, START_LEFT, EMPTY_LEFT );
+	Light.fillTo( 3, 30, START_RIGHT, EMPTY_RIGHT );
+	Light.knightRider( 7, 40, START_RIGHT );
+	Light.knightRiderMiddle( 4, 40, START_INSIDE );
 	//Light.knightRiderMiddle(START_INSIDE, 80, 1);
 	std::cout << "\n";
 	//Light.fillUp(START_RIGHT, EMPTY_LEFT, 80, 1);
