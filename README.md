@@ -2,6 +2,8 @@
 A simple ChaseLight library for Arduino. It should be easy to use for everyone even without any coding experience. All member functions can be called without any argument.
 Since the delay function is used in the code, the microcontroller can't do anything else then the chaselight. I will create another library for this case.
 
+The time library is implemented WIP.
+
 ## How to use this library?
 1. Download the .zip file from GitHub.
 
@@ -12,24 +14,23 @@ Since the delay function is used in the code, the microcontroller can't do anyth
 ```C
 #include <ChaseLight.h>
 ```
-
+### Delay version
 4. Create a global class object.
 ```C
 ChaseLight Light;
 ```
 
-5. In the Setup function create an array with the output pins in the order from left to right. The size variable is optional, but you need it for the init function. the init functions needs the size of the array, the array itself and the default delay.
+5. In the Setup function create an array with the output pins in the order from left to right. The init functions needs the size of the array, the array itself and the default delay.
 ```C
 int	init( const myByte &size, const myByte *channels, const int &mDelay );
 ```
 
 ```C
-void setup(void)
+void setup( void )
 {
-	const myByte size = 9;
-	const myByte channels[size] = {9, 10, 8, 7, 4, 5, 6, 3, 2};
+	const myByte channels[] = {9, 10, 8, 7, 4, 5, 6, 3, 2};
 
-	Light.init(size, channels, 150)
+	Light.init( sizeof( channels ), channels, 100);
 }
 ```
 
@@ -42,21 +43,59 @@ void loop(void)
   Light.knightRiderMiddle();
   Light.fillUp();
   Light.fillTo();
+  Light.move();
+}
+```
+
+### Time version
+4. Create a global class object.
+```C
+ChaseLightTime Light;
+```
+
+5. In the Setup function create an array with the output pins in the order from left to right. The init functions needs the size of the array, the array itself and the default delay.
+```C
+int	init( const myByte &size, const myByte *channels, const int &mDelay );
+```
+
+In order to process the sequence steps inside the loop. The object needs to create the sequence. That has to happen in the setup function. If needed you can also register buttons. Keep in mind that the Time functionality is still WIP.
+```C
+void setup( void )
+{
+	const myByte channels[] = {9, 10, 8, 7, 4, 5, 6, 3, 2};
+
+	Light.init( sizeof( channels ), channels, 100);
+	Light.fillUp( 1, 30, START_LEFT, EMPTY_LEFT );
+	Light.registerButton( 0, &ChaseLightTime::pauseToggle );
+	Light.registerButton( 1, &ChaseLightTime::stopToggle );
+}
+```
+
+6. In the loop function call the chaselight loopStep member function.
+```C
+void loop(void)
+{
+	Light.loopStep();
 }
 ```
 
 ## What is inside?
 ```C
-void	flash( int mDelay = 0, const myByte count = 3 );
-void	knightRider( e_setting setTo = START_LEFT, int mDelay = 0, const myByte &count = 3 );
-void	knightRiderMiddle( e_setMiddle setTo = START_INSIDE, int mDelay = 0, const myByte &count = 3 );
-void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
-void	fillTo( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
+void	setAllChannelsD( const myByte &value );
+
+void	flash( const myByte &count = 3, int mDelay = 0 );
+void	knightRider( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT );
+void	knightRiderMiddle( const myByte &count = 3, int mDelay = 0, e_setMiddle setTo = START_INSIDE );
+void	moveFillUp( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
+void	fillTo( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
+void	move( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
 ```
+
+
 
 ## flash
 ```C
-void	flash( int mDelay = 0, const myByte count = 3 );
+void	flash( const myByte &count = 3, int mDelay = 0 );
 ```
 > All connected lights will light up in a loop - turned on and off. <br>
 `mDelay` Delay in miliseconds for switching lights - default = this->mDelay. <br>
@@ -71,7 +110,7 @@ void	flash( int mDelay = 0, const myByte count = 3 );
 
 ## knightRider
 ```C
-void	knightRider( e_setting setTo = START_LEFT, int mDelay = 0, const myByte &count = 3 );
+void	knightRider( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT );
 ```
 > One light moving in a loop. Can be customized with first argument setTo. <br>
 `START_LEFT` = light starts left and moves to the right. <br>
@@ -110,7 +149,7 @@ void	knightRider( e_setting setTo = START_LEFT, int mDelay = 0, const myByte &co
 
 ## knightRiderMiddle
 ```C
-void	knightRiderMiddle( e_setMiddle setTo = START_INSIDE, int mDelay = 0, const myByte &count = 3 );
+void	knightRiderMiddle( const myByte &count = 3, int mDelay = 0, e_setMiddle setTo = START_INSIDE );
 ```
 > Two lights moving from the inside to the outside and then returning back to the inside. <br>
 Can be customized with first argument setTo. <br>
@@ -149,7 +188,7 @@ Can be customized with first argument setTo. <br>
 
 ## fillUp
 ```C
-void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
+void	moveFillUp( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
 ```
 
 > One light moving and filling up till all lights turned to !value. Can be customized with first argument setTo and second argument setEmpty. <br>
@@ -228,7 +267,7 @@ void	fillUp( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDela
 
 ## fillTo
 ```C
-void	fillTo( e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE, int mDelay = 0, const myByte &count = 3 );
+void	fillTo( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
 ```
 
 > One light after another turing to !value till all lights turned to !value. <br>
@@ -297,3 +336,12 @@ Can be customized with first argument setTo and second argument setEmpty. <br>
 `Light.fillTo( START_RIGHT_INVERTED, EMPTY_RIGHT );`
 
 ![34fillTo_cropped](https://user-images.githubusercontent.com/104884267/216937607-561f6768-12fa-4611-85f1-6d69183046eb.gif)
+
+
+## move
+```C
+void	move( const myByte &count = 3, int mDelay = 0, e_setting setTo = START_LEFT, e_empty empty = EMPTY_NONE );
+```
+### EMPTY_NONE
+### EMPTY_LEFT
+### EMPTY_RIGHT
